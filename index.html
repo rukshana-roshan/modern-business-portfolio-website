@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina Studio — Creative Agency</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --black:   #0C0C0C;
+      --white:   #F8F6F1;
+      --accent:  #E8FF47;
+      --mid:     #1E1E1E;
+      --muted:   #7A7A72;
+      --border:  rgba(248,246,241,.1);
+      --ff-head: 'Syne', sans-serif;
+      --ff-body: 'Instrument Sans', sans-serif;
+    }
+
+    /* ─── BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-body);
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+    img { display: block; }
+    a { text-decoration: none; }
+
+    /* ─── UTILITY ─── */
+    .font-head  { font-family: var(--ff-head); }
+    .text-accent { color: var(--accent) !important; }
+    .bg-mid    { background: var(--mid); }
+    .bg-white-site { background: var(--white); color: var(--black); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(40px);  } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn   { from { opacity:0; }                              to { opacity:1; } }
+    @keyframes slideL   { from { opacity:0; transform:translateX(-50px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes slideR   { from { opacity:0; transform:translateX(50px);  } to { opacity:1; transform:translateX(0); } }
+    @keyframes scaleIn  { from { opacity:0; transform:scale(.88); }        to { opacity:1; transform:scale(1); } }
+    @keyframes marquee  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+    @keyframes pulse    { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+    @keyframes spinSlow { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+    .anim-fadeup  { opacity:0; animation:fadeUp  .8s ease forwards; }
+    .anim-fadein  { opacity:0; animation:fadeIn  .9s ease forwards; }
+    .anim-slidel  { opacity:0; animation:slideL  .8s ease forwards; }
+    .anim-slider  { opacity:0; animation:slideR  .8s ease forwards; }
+    .anim-scalein { opacity:0; animation:scaleIn .8s ease forwards; }
+
+    .delay-1 { animation-delay:.15s; }
+    .delay-2 { animation-delay:.30s; }
+    .delay-3 { animation-delay:.45s; }
+    .delay-4 { animation-delay:.60s; }
+    .delay-5 { animation-delay:.75s; }
+
+    /* Scroll reveal (JS adds .revealed) */
+    .reveal { opacity:0; transform:translateY(32px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal.revealed { opacity:1; transform:none; }
+    .reveal-l { opacity:0; transform:translateX(-40px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal-l.revealed { opacity:1; transform:none; }
+    .reveal-r { opacity:0; transform:translateX(40px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal-r.revealed { opacity:1; transform:none; }
+
+    /* ─── PROGRESS BAR ─── */
+    #progress-bar {
+      position:fixed; top:0; left:0; height:2px;
+      background:var(--accent); width:0; z-index:2000;
+      transition:width .1s linear;
+    }
+
+    /* ─── NAVBAR ─── */
+    .navbar {
+      background: rgba(12,12,12,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      transition: padding .3s, box-shadow .3s;
+    }
+    .navbar.scrolled { padding:.6rem 0; box-shadow:0 4px 32px rgba(0,0,0,.5); }
+    .navbar-brand {
+      font-family: var(--ff-head);
+      font-size: 1.45rem; font-weight: 800;
+      color: var(--white) !important;
+      letter-spacing: -1px;
+    }
+    .navbar-brand span { color: var(--accent); }
+    .navbar-toggler { border-color: var(--border); }
+    .navbar-toggler-icon { filter: invert(1); }
+    .nav-link {
+      color: rgba(248,246,241,.65) !important;
+      font-size: .88rem; font-weight: 400;
+      padding: .4rem .9rem !important;
+      transition: color .2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--white) !important; }
+    .nav-cta {
+      background: var(--accent) !important;
+      color: var(--black) !important;
+      font-weight: 600; border-radius: 2px;
+      padding: .45rem 1.2rem !important;
+      transition: opacity .2s, transform .2s;
+    }
+    .nav-cta:hover { opacity:.85; transform:translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      padding-top: 80px;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .hero-bg {
+      position:absolute; inset:0; z-index:0;
+      background:
+        radial-gradient(ellipse 60% 70% at 80% 50%, rgba(232,255,71,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 10% 80%, rgba(232,255,71,.04) 0%, transparent 50%);
+    }
+    .hero-grid-overlay {
+      position:absolute; inset:0; z-index:0;
+      background-image:
+        linear-gradient(rgba(248,246,241,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(248,246,241,.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-eyebrow {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-size:.72rem; letter-spacing:2.5px; text-transform:uppercase;
+      color:var(--accent); font-weight:600;
+    }
+    .hero-eyebrow::before { content:''; width:28px; height:1px; background:var(--accent); }
+    .hero-title {
+      font-family: var(--ff-head);
+      font-size: clamp(2.8rem, 6vw, 6.5rem);
+      font-weight: 800; line-height: 1.0;
+      letter-spacing: -2px;
+    }
+    .hero-title .outline {
+      -webkit-text-stroke: 1px var(--white);
+      color: transparent;
+    }
+    .hero-sub {
+      color: var(--muted); font-size:1.05rem;
+      line-height: 1.75; max-width:400px;
+    }
+    .btn-accent {
+      background: var(--accent); color: var(--black);
+      font-family: var(--ff-head); font-weight: 700;
+      font-size:.9rem; padding:14px 32px;
+      border: none; border-radius: 2px; cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-accent:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(232,255,71,.25); color:var(--black); }
+    .btn-ghost {
+      background: transparent; color: var(--white);
+      font-family: var(--ff-head); font-weight: 600;
+      font-size:.9rem; padding:13px 32px;
+      border: 1px solid rgba(248,246,241,.2); border-radius: 2px; cursor:pointer;
+      transition: border-color .2s, transform .2s;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .btn-ghost:hover { border-color:var(--white); transform:translateY(-3px); color:var(--white); }
+
+    /* Hero image cluster */
+    .hero-imgs {
+      position:relative; height:520px;
+    }
+    .hero-img-main {
+      position:absolute; top:0; right:0;
+      width:72%; aspect-ratio:3/4;
+      border-radius:4px; overflow:hidden;
+    }
+    .hero-img-main img {
+      width:100%; height:100%; object-fit:cover;
+      transition:transform 8s ease;
+    }
+    .hero-img-main:hover img { transform:scale(1.06); }
+
+    .hero-img-sm {
+      position:absolute; bottom:0; left:0;
+      width:48%; aspect-ratio:4/3;
+      border-radius:4px; overflow:hidden;
+      border:3px solid var(--black);
+    }
+    .hero-img-sm img { width:100%; height:100%; object-fit:cover; }
+
+    .hero-badge {
+      position:absolute; top:50%; left:52%; transform:translate(-50%,-50%);
+      width:90px; height:90px;
+      background:var(--accent); border-radius:50%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-family:var(--ff-head); font-size:.55rem; font-weight:700;
+      color:var(--black); letter-spacing:1.5px; text-transform:uppercase;
+      text-align:center; line-height:1.3;
+      animation:spinSlow 14s linear infinite; z-index:10;
+    }
+
+    .hero-stats {
+      display:flex; gap:2.5rem; margin-top:2.5rem; flex-wrap:wrap;
+    }
+    .stat-num {
+      font-family:var(--ff-head); font-size:2rem; font-weight:800;
+      color:var(--white); line-height:1;
+    }
+    .stat-num span { color:var(--accent); }
+    .stat-label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:.2rem; }
+
+    /* ─── MARQUEE ─── */
+    .marquee-wrap {
+      background:var(--accent); overflow:hidden;
+      padding:.6rem 0; border-top:0; border-bottom:0;
+    }
+    .marquee-track {
+      display:flex; gap:3rem; width:max-content;
+      animation:marquee 20s linear infinite;
+    }
+    .marquee-item {
+      font-family:var(--ff-head); font-weight:700; font-size:1rem;
+      color:var(--black); white-space:nowrap; letter-spacing:-.3px;
+      display:flex; align-items:center; gap:1rem;
+    }
+    .marquee-dot { width:6px; height:6px; border-radius:50%; background:rgba(12,12,12,.4); }
+
+    /* ─── SECTION LABELS ─── */
+    .section-label {
+      font-size:.7rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--accent); font-weight:600; margin-bottom:.75rem;
+    }
+    .section-title {
+      font-family:var(--ff-head);
+      font-size:clamp(1.9rem, 3.5vw, 3.2rem);
+      font-weight:800; line-height:1.1;
+      letter-spacing:-1px;
+    }
+
+    /* ─── SERVICES ─── */
+    .services-section { background:var(--mid); }
+    .service-card {
+      background: rgba(248,246,241,.04);
+      border: 1px solid rgba(248,246,241,.08);
+      border-radius: 6px; padding: 2rem;
+      transition: background .3s, border-color .3s, transform .3s;
+      height:100%;
+    }
+    .service-card:hover {
+      background: rgba(232,255,71,.06);
+      border-color: rgba(232,255,71,.3);
+      transform:translateY(-6px);
+    }
+    .service-icon {
+      width:48px; height:48px;
+      background:rgba(232,255,71,.12);
+      border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; color:var(--accent);
+      margin-bottom:1.25rem;
+    }
+    .service-card h4 {
+      font-family:var(--ff-head); font-weight:700;
+      font-size:1.1rem; margin-bottom:.5rem;
+    }
+    .service-card p { font-size:.875rem; color:var(--muted); line-height:1.7; margin:0; }
+    .service-num {
+      font-family:var(--ff-head); font-size:.75rem;
+      color:rgba(248,246,241,.2); font-weight:700; letter-spacing:1px;
+      margin-bottom:1rem;
+    }
+
+    /* ─── PORTFOLIO ─── */
+    .portfolio-section { background:var(--black); }
+
+    .portfolio-filters { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:2.5rem; }
+    .filter-btn {
+      padding:.4rem 1.1rem; border-radius:2px;
+      border:1px solid rgba(248,246,241,.15);
+      background:transparent; color:var(--muted);
+      font-size:.8rem; cursor:pointer;
+      transition:all .2s; font-family:var(--ff-body);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background:var(--accent); color:var(--black);
+      border-color:var(--accent); font-weight:600;
+    }
+
+    .portfolio-item { position:relative; overflow:hidden; border-radius:4px; cursor:pointer; }
+    .portfolio-item img {
+      width:100%; object-fit:cover;
+      transition:transform .6s ease;
+      display:block;
+    }
+    .portfolio-item:hover img { transform:scale(1.07); }
+    .portfolio-overlay {
+      position:absolute; inset:0;
+      background:rgba(12,12,12,.75);
+      display:flex; flex-direction:column;
+      justify-content:flex-end; padding:1.5rem;
+      opacity:0; transition:opacity .35s;
+    }
+    .portfolio-item:hover .portfolio-overlay { opacity:1; }
+    .portfolio-overlay h5 {
+      font-family:var(--ff-head); font-weight:700; font-size:1.1rem;
+      margin:0 0 .25rem;
+    }
+    .portfolio-overlay span { font-size:.78rem; color:var(--accent); }
+    .portfolio-arrow {
+      position:absolute; top:1rem; right:1rem;
+      width:36px; height:36px; border-radius:50%;
+      background:var(--accent); color:var(--black);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem;
+    }
+    .portfolio-item.tall img { aspect-ratio:2/3; }
+    .portfolio-item.wide img { aspect-ratio:16/9; }
+    .portfolio-item.sq   img { aspect-ratio:1/1; }
+
+    /* ─── ABOUT ─── */
+    .about-section { background:var(--mid); }
+    .about-img-wrap {
+      position:relative;
+    }
+    .about-img-main {
+      width:100%; aspect-ratio:4/5;
+      object-fit:cover; border-radius:4px;
+    }
+    .about-img-accent {
+      position:absolute; bottom:-24px; right:-24px;
+      width:55%; aspect-ratio:1/1;
+      object-fit:cover; border-radius:4px;
+      border:4px solid var(--mid);
+    }
+    .about-floater {
+      position:absolute; top:-20px; left:-20px;
+      background:var(--accent); border-radius:4px;
+      padding:1rem 1.25rem; z-index:10;
+    }
+    .about-floater .big { font-family:var(--ff-head); font-size:2rem; font-weight:800; color:var(--black); line-height:1; }
+    .about-floater .small { font-size:.7rem; color:rgba(12,12,12,.6); text-transform:uppercase; letter-spacing:1px; }
+    .about-text { padding-left:2rem; }
+    .skill-bar-wrap { margin-bottom:1.1rem; }
+    .skill-bar-label { display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:.35rem; color:rgba(248,246,241,.7); }
+    .skill-bar-track { height:3px; background:rgba(248,246,241,.1); border-radius:2px; overflow:hidden; }
+    .skill-bar-fill { height:100%; background:var(--accent); border-radius:2px; transform:scaleX(0); transform-origin:left; transition:transform 1.2s ease; }
+    .skill-bar-fill.animated { transform:scaleX(1); }
+
+    /* ─── TEAM ─── */
+    .team-section { background:var(--black); }
+    .team-card { position:relative; overflow:hidden; border-radius:4px; }
+    .team-card img {
+      width:100%; aspect-ratio:3/4; object-fit:cover;
+      transition:transform .5s ease; filter:grayscale(30%);
+    }
+    .team-card:hover img { transform:scale(1.05); filter:grayscale(0); }
+    .team-info {
+      position:absolute; bottom:0; left:0; right:0;
+      background:linear-gradient(transparent, rgba(12,12,12,.9));
+      padding:3rem 1.25rem 1.25rem;
+    }
+    .team-name { font-family:var(--ff-head); font-weight:700; font-size:1.05rem; margin:0; }
+    .team-role { font-size:.78rem; color:var(--accent); margin:.1rem 0 0; }
+    .team-socials { display:flex; gap:.4rem; margin-top:.5rem; }
+    .team-socials a {
+      width:28px; height:28px; border-radius:50%;
+      background:rgba(248,246,241,.15);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--white); font-size:.75rem;
+      transition:background .2s;
+    }
+    .team-socials a:hover { background:var(--accent); color:var(--black); }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-section { background:var(--mid); }
+    .testimonial-card {
+      background:rgba(248,246,241,.04);
+      border:1px solid rgba(248,246,241,.08);
+      border-radius:6px; padding:2rem;
+      height:100%;
+      transition:border-color .3s, transform .3s;
+    }
+    .testimonial-card:hover { border-color:rgba(232,255,71,.3); transform:translateY(-4px); }
+    .t-quote { font-size:2.5rem; color:var(--accent); font-family:serif; line-height:.8; margin-bottom:.75rem; }
+    .t-text { font-style:italic; font-size:.92rem; color:rgba(248,246,241,.75); line-height:1.75; margin-bottom:1.5rem; }
+    .t-author { display:flex; align-items:center; gap:.75rem; }
+    .t-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid rgba(232,255,71,.3); flex-shrink:0; }
+    .t-name { font-family:var(--ff-head); font-weight:700; font-size:.9rem; margin:0; }
+    .t-role { font-size:.75rem; color:var(--muted); }
+    .t-stars { color:var(--accent); font-size:.8rem; letter-spacing:1px; margin-bottom:.5rem; }
+
+    /* ─── STATS BANNER ─── */
+    .stats-section {
+      background:var(--accent);
+    }
+    .stat-item { text-align:center; padding:1rem; }
+    .stat-big { font-family:var(--ff-head); font-size:clamp(2.5rem,5vw,4rem); font-weight:800; color:var(--black); line-height:1; }
+    .stat-desc { font-size:.82rem; color:rgba(12,12,12,.6); text-transform:uppercase; letter-spacing:1.5px; margin-top:.35rem; }
+
+    /* ─── BLOG ─── */
+    .blog-section { background:var(--black); }
+    .blog-card { border-radius:6px; overflow:hidden; background:var(--mid); height:100%; transition:transform .3s; }
+    .blog-card:hover { transform:translateY(-6px); }
+    .blog-img { width:100%; aspect-ratio:16/9; object-fit:cover; transition:transform .5s; }
+    .blog-card:hover .blog-img { transform:scale(1.04); }
+    .blog-img-wrap { overflow:hidden; }
+    .blog-body { padding:1.5rem; }
+    .blog-tag { font-size:.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:.5rem; }
+    .blog-title { font-family:var(--ff-head); font-weight:700; font-size:1.05rem; line-height:1.3; margin-bottom:.5rem; color:var(--white); }
+    .blog-meta { font-size:.78rem; color:var(--muted); display:flex; gap:1rem; align-items:center; }
+    .blog-excerpt { font-size:.85rem; color:rgba(248,246,241,.6); line-height:1.7; margin:.75rem 0 1rem; }
+    .blog-read-more { font-size:.82rem; color:var(--accent); font-weight:600; display:flex; align-items:center; gap:.3rem; transition:gap .2s; }
+    .blog-card:hover .blog-read-more { gap:.6rem; }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section {
+      background:var(--mid);
+      position:relative; overflow:hidden;
+    }
+    .cta-section::before {
+      content:'';
+      position:absolute; top:-200px; right:-200px;
+      width:600px; height:600px;
+      background:radial-gradient(circle, rgba(232,255,71,.08) 0%, transparent 60%);
+    }
+    .cta-img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:6px; }
+
+    /* ─── CONTACT ─── */
+    .contact-section { background:var(--black); }
+    .contact-form .form-control {
+      background:rgba(248,246,241,.06);
+      border:1px solid rgba(248,246,241,.1);
+      color:var(--white); border-radius:2px;
+      padding:.85rem 1rem; font-family:var(--ff-body); font-size:.9rem;
+      transition:border-color .2s, background .2s;
+    }
+    .contact-form .form-control:focus {
+      background:rgba(248,246,241,.1);
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(232,255,71,.1);
+      color:var(--white);
+    }
+    .contact-form .form-control::placeholder { color:rgba(248,246,241,.3); }
+    .contact-form label { font-size:.8rem; color:rgba(248,246,241,.6); letter-spacing:.5px; margin-bottom:.4rem; text-transform:uppercase; }
+    .contact-info-item { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1.5rem; }
+    .contact-info-icon {
+      width:44px; height:44px; border-radius:8px;
+      background:rgba(232,255,71,.1); flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--accent); font-size:1rem;
+    }
+    .contact-info-text h6 { font-family:var(--ff-head); font-weight:700; font-size:.88rem; margin:0 0 .2rem; }
+    .contact-info-text p { font-size:.85rem; color:var(--muted); margin:0; }
+
+    /* ─── FOOTER ─── */
+    footer { background:#080808; border-top:1px solid rgba(248,246,241,.06); padding:4rem 0 2rem; }
+    .footer-brand { font-family:var(--ff-head); font-size:1.5rem; font-weight:800; color:var(--white); letter-spacing:-1px; }
+    .footer-brand span { color:var(--accent); }
+    .footer-desc { font-size:.875rem; color:var(--muted); line-height:1.8; max-width:280px; margin-top:.75rem; }
+    .footer-heading { font-family:var(--ff-head); font-size:.72rem; letter-spacing:2.5px; text-transform:uppercase; color:rgba(248,246,241,.4); margin-bottom:1.25rem; }
+    .footer-links { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem; }
+    .footer-links a { color:rgba(248,246,241,.55); font-size:.875rem; transition:color .2s; }
+    .footer-links a:hover { color:var(--accent); }
+    .footer-social { display:flex; gap:.6rem; margin-top:1.25rem; }
+    .footer-social a {
+      width:36px; height:36px; border-radius:50%;
+      border:1px solid rgba(248,246,241,.12);
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(248,246,241,.5); font-size:.85rem;
+      transition:all .2s;
+    }
+    .footer-social a:hover { background:var(--accent); border-color:var(--accent); color:var(--black); transform:translateY(-2px); }
+    .footer-divider { border-color:rgba(248,246,241,.07); margin:2rem 0 1.5rem; }
+    .footer-copy { font-size:.78rem; color:rgba(248,246,241,.3); }
+
+    /* ─── RESPONSIVE OVERRIDES ─── */
+    @media (max-width: 991.98px) {
+      .about-text { padding-left:0; margin-top:3rem; }
+      .about-img-accent { display:none; }
+      .about-floater { left:0; }
+      .hero-imgs { height:360px; }
+      .hero-img-main { width:80%; }
+    }
+    @media (max-width: 767.98px) {
+      .hero-badge { width:70px; height:70px; font-size:.5rem; }
+      .hero-imgs { display:none; }
+      .cta-img { margin-bottom:2rem; }
+      .blog-meta { flex-wrap:wrap; gap:.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div id="progress-bar"></div>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="#">Lumina<span>.</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center gap-1">
+        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="#portfolio">Work</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
+        <li class="nav-item"><a class="nav-link" href="#blog">Journal</a></li>
+        <li class="nav-item ms-2">
+          <a class="nav-link nav-cta" href="#contact">Let's Talk</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-overlay"></div>
+  <div class="container position-relative z-1">
+    <div class="row align-items-center g-5">
+
+      <!-- Text -->
+      <div class="col-lg-6">
+        <div class="hero-eyebrow anim-fadein">Award-winning Studio</div>
+        <h1 class="hero-title mt-3 mb-4 anim-fadeup delay-1">
+          We Build<br><span class="outline">Digital</span><br>Experiences
+        </h1>
+        <p class="hero-sub anim-fadeup delay-2 mb-4">
+          Lumina is a creative agency crafting bold identities, immersive web experiences, and unforgettable campaigns.
+        </p>
+        <div class="d-flex flex-wrap gap-3 anim-fadeup delay-3">
+          <a href="#portfolio" class="btn-accent">
+            View Our Work <i class="bi bi-arrow-right"></i>
+          </a>
+          <a href="#contact" class="btn-ghost">
+            <i class="bi bi-play-circle"></i> Watch Reel
+          </a>
+        </div>
+        <div class="hero-stats anim-fadeup delay-4">
+          <div>
+            <div class="stat-num">12<span>+</span></div>
+            <div class="stat-label">Years Active</div>
+          </div>
+          <div>
+            <div class="stat-num">340<span>+</span></div>
+            <div class="stat-label">Projects Done</div>
+          </div>
+          <div>
+            <div class="stat-num">98<span>%</span></div>
+            <div class="stat-label">Happy Clients</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="col-lg-6 anim-slider delay-2">
+        <div class="hero-imgs">
+          <div class="hero-img-main">
+            <img
+              src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=1000&fit=crop"
+              srcset="
+                https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=500&fit=crop  400w,
+                https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=1000&fit=crop 800w"
+              sizes="(max-width:768px) 100vw, 50vw"
+              alt="Creative studio space"
+              class="img-fluid"
+              loading="eager"
+            />
+          </div>
+          <div class="hero-badge">Since<br>2012<br>★★★★★</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Brand Identity <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Web Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Motion Graphics <span class="marquee-dot"></span></span>
+    <span class="marquee-item">UX/UI Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">SEO Strategy <span class="marquee-dot"></span></span>
+    <span class="marquee-item">3D Rendering <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Photography <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Brand Identity <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Web Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Motion Graphics <span class="marquee-dot"></span></span>
+    <span class="marquee-item">UX/UI Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">SEO Strategy <span class="marquee-dot"></span></span>
+    <span class="marquee-item">3D Rendering <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Photography <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="services-section py-5" id="services">
+  <div class="container py-4">
+    <div class="row mb-5">
+      <div class="col-lg-6 reveal">
+        <div class="section-label">What We Do</div>
+        <h2 class="section-title">Services Built<br>for Impact</h2>
+      </div>
+      <div class="col-lg-6 d-flex align-items-end reveal">
+        <p class="text-muted mb-0" style="font-size:.95rem; line-height:1.8; color:var(--muted) !important;">
+          From concept to launch, we deliver end-to-end creative solutions that push boundaries and drive measurable results for ambitious brands.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- service cards -->
+      <div class="col-sm-6 col-lg-3 reveal"><div class="service-card">
+        <div class="service-num">01</div>
+        <div class="service-icon"><i class="bi bi-vector-pen"></i></div>
+        <h4>Brand Identity</h4>
+        <p>Logos, guidelines, and brand systems that make you instantly recognisable in any medium.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.1s"><div class="service-card">
+        <div class="service-num">02</div>
+        <div class="service-icon"><i class="bi bi-display"></i></div>
+        <h4>Web & App Design</h4>
+        <p>Pixel-perfect, conversion-focused interfaces grounded in real user research.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.2s"><div class="service-card">
+        <div class="service-num">03</div>
+        <div class="service-icon"><i class="bi bi-camera-video"></i></div>
+        <h4>Motion & Video</h4>
+        <p>Scroll-stopping animations, explainer videos, and social content that captivates.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.3s"><div class="service-card">
+        <div class="service-num">04</div>
+        <div class="service-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <h4>Growth Marketing</h4>
+        <p>SEO, paid media, and analytics strategies that turn traffic into lasting revenue.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.1s"><div class="service-card">
+        <div class="service-num">05</div>
+        <div class="service-icon"><i class="bi bi-box-seam"></i></div>
+        <h4>Packaging Design</h4>
+        <p>Tactile, shelf-ready packaging that tells your brand story at a glance.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.2s"><div class="service-card">
+        <div class="service-num">06</div>
+        <div class="service-icon"><i class="bi bi-phone"></i></div>
+        <h4>Social Media</h4>
+        <p>Scroll-native content strategies and community management that builds loyalty.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.3s"><div class="service-card">
+        <div class="service-num">07</div>
+        <div class="service-icon"><i class="bi bi-cpu"></i></div>
+        <h4>AI Integration</h4>
+        <p>Automate workflows and personalise experiences with cutting-edge AI tools.</p>
+      </div></div>
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.4s"><div class="service-card">
+        <div class="service-num">08</div>
+        <div class="service-icon"><i class="bi bi-easel2"></i></div>
+        <h4>Campaign Strategy</h4>
+        <p>360° campaign concepts that unify your message across every channel.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PORTFOLIO ═══ -->
+<section class="portfolio-section py-5" id="portfolio">
+  <div class="container py-4">
+    <div class="row align-items-end mb-4">
+      <div class="col-lg-6 reveal">
+        <div class="section-label">Selected Work</div>
+        <h2 class="section-title">Our Recent<br>Projects</h2>
+      </div>
+      <div class="col-lg-6 text-lg-end reveal">
+        <div class="portfolio-filters justify-content-lg-end">
+          <button class="filter-btn active" onclick="filterPortfolio('all',this)">All</button>
+          <button class="filter-btn" onclick="filterPortfolio('branding',this)">Branding</button>
+          <button class="filter-btn" onclick="filterPortfolio('web',this)">Web</button>
+          <button class="filter-btn" onclick="filterPortfolio('motion',this)">Motion</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Masonry-style grid using Bootstrap -->
+    <div class="row g-3" id="portfolioGrid">
+
+      <div class="col-md-4" data-cat="branding">
+        <div class="portfolio-item tall reveal">
+          <img
+            src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=900&fit=crop"
+            srcset="
+              https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=600&fit=crop 400w,
+              https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=900&fit=crop 600w"
+            sizes="(max-width:768px) 100vw, 33vw"
+            alt="Brand identity project" class="img-fluid" loading="lazy"
+          />
+          <div class="portfolio-overlay">
+            <h5>Nova Branding</h5>
+            <span>Brand Identity / Print</span>
+          </div>
+          <div class="portfolio-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-8" data-cat="web">
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="portfolio-item wide reveal">
+              <img
+                src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=900&h=500&fit=crop"
+                srcset="
+                  https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=600&h=338&fit=crop  600w,
+                  https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=900&h=500&fit=crop  900w"
+                sizes="(max-width:768px) 100vw, 66vw"
+                alt="Web design project" class="img-fluid" loading="lazy"
+              />
+              <div class="portfolio-overlay">
+                <h5>Orion Finance Platform</h5>
+                <span>UI/UX Design / Development</span>
+              </div>
+              <div class="portfolio-arrow"><i class="bi bi-arrow-up-right"></i></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="portfolio-item sq reveal">
+              <img
+                src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&h=500&fit=crop"
+                srcset="
+                  https://images.unsplash.com/photo-1558655146-d09347e92766?w=300&h=300&fit=crop  300w,
+                  https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&h=500&fit=crop  500w"
+                sizes="(max-width:768px) 50vw, 30vw"
+                alt="Logo design" class="img-fluid" loading="lazy"
+              />
+              <div class="portfolio-overlay">
+                <h5>Pulse App Icon</h5>
+                <span>Motion / Branding</span>
+              </div>
+              <div class="portfolio-arrow"><i class="bi bi-arrow-up-right"></i></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="portfolio-item sq reveal">
+              <img
+                src="https://images.unsplash.com/photo-1586717799252-bd134ad00e26?w=500&h=500&fit=crop"
+                srcset="
+                  https://images.unsplash.com/photo-1586717799252-bd134ad00e26?w=300&h=300&fit=crop  300w,
+                  https://images.unsplash.com/photo-1586717799252-bd134ad00e26?w=500&h=500&fit=crop  500w"
+                sizes="(max-width:768px) 50vw, 30vw"
+                alt="Packaging design" class="img-fluid" loading="lazy"
+              />
+              <div class="portfolio-overlay">
+                <h5>Bloom Packaging</h5>
+                <span>Packaging / Print</span>
+              </div>
+              <div class="portfolio-arrow"><i class="bi bi-arrow-up-right"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5" data-cat="motion">
+        <div class="portfolio-item wide reveal">
+          <img
+            src="https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=700&h=440&fit=crop"
+            srcset="
+              https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=400&h=250&fit=crop  400w,
+              https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=700&h=440&fit=crop  700w"
+            sizes="(max-width:768px) 100vw, 40vw"
+            alt="Motion graphics" class="img-fluid" loading="lazy"
+          />
+          <div class="portfolio-overlay">
+            <h5>TechWave Reel</h5>
+            <span>Motion Graphics</span>
+          </div>
+          <div class="portfolio-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-7" data-cat="branding">
+        <div class="portfolio-item wide reveal">
+          <img
+            src="https://images.unsplash.com/photo-1542744094-24638eff58bb?w=900&h=560&fit=crop"
+            srcset="
+              https://images.unsplash.com/photo-1542744094-24638eff58bb?w=500&h=310&fit=crop  500w,
+              https://images.unsplash.com/photo-1542744094-24638eff58bb?w=900&h=560&fit=crop  900w"
+            sizes="(max-width:768px) 100vw, 58vw"
+            alt="Campaign design" class="img-fluid" loading="lazy"
+          />
+          <div class="portfolio-overlay">
+            <h5>Meridian Campaign</h5>
+            <span>Campaign / Photography</span>
+          </div>
+          <div class="portfolio-arrow"><i class="bi bi-arrow-up-right"></i></div>
+        </div>
+      </div>
+
+    </div><!-- /portfolioGrid -->
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="about-section py-5" id="about">
+  <div class="container py-4">
+    <div class="row g-5 align-items-center">
+
+      <div class="col-lg-5 reveal-l">
+        <div class="about-img-wrap ps-4">
+          <div class="about-floater">
+            <div class="big">12</div>
+            <div class="small">Years of<br>excellence</div>
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&h=875&fit=crop"
+            srcset="
+              https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=500&fit=crop  400w,
+              https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&h=875&fit=crop  700w"
+            sizes="(max-width:768px) 100vw, 42vw"
+            alt="Our studio team at work"
+            class="about-img-main img-fluid"
+            loading="lazy"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=400&fit=crop"
+            srcset="
+              https://images.unsplash.com/photo-1552664730-d307ca884978?w=250&h=250&fit=crop  250w,
+              https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=400&fit=crop  400w"
+            sizes="25vw"
+            alt="Team brainstorm"
+            class="about-img-accent img-fluid"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <div class="col-lg-7 reveal-r">
+        <div class="about-text">
+          <div class="section-label">Our Story</div>
+          <h2 class="section-title mb-4">A Studio Obsessed<br>with Craft</h2>
+          <p style="color:var(--muted); line-height:1.85; margin-bottom:1.25rem;">
+            Founded in 2012 by two designers tired of mediocre work, Lumina was built on the belief that every pixel, every word, every interaction should have purpose. We've since grown into a 40-person powerhouse working with start-ups to Fortune 500 brands.
+          </p>
+          <p style="color:var(--muted); line-height:1.85; margin-bottom:2rem;">
+            Our process is intentional and collaborative — we embed with your team to understand the real problem before we ever touch a design tool.
+          </p>
+
+          <!-- Skills -->
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label"><span>Brand Strategy</span><span>96%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:96%" data-w="96"></div></div>
+          </div>
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label"><span>UI/UX Design</span><span>92%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:92%" data-w="92"></div></div>
+          </div>
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label"><span>Web Development</span><span>88%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%" data-w="88"></div></div>
+          </div>
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label"><span>Motion Design</span><span>85%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%" data-w="85"></div></div>
+          </div>
+
+          <div class="mt-4 d-flex gap-3 flex-wrap">
+            <a href="#contact" class="btn-accent">Work With Us <i class="bi bi-arrow-right"></i></a>
+            <a href="#team" class="btn-ghost">Meet the Team</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats-section py-5" id="stats">
+  <div class="container py-2">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3 reveal"><div class="stat-item">
+        <div class="stat-big" data-target="340">0</div>
+        <div class="stat-desc">Projects Delivered</div>
+      </div></div>
+      <div class="col-6 col-md-3 reveal" style="transition-delay:.1s"><div class="stat-item">
+        <div class="stat-big" data-target="120">0</div>
+        <div class="stat-desc">Happy Clients</div>
+      </div></div>
+      <div class="col-6 col-md-3 reveal" style="transition-delay:.2s"><div class="stat-item">
+        <div class="stat-big" data-target="28">0</div>
+        <div class="stat-desc">Design Awards</div>
+      </div></div>
+      <div class="col-6 col-md-3 reveal" style="transition-delay:.3s"><div class="stat-item">
+        <div class="stat-big" data-target="40">0</div>
+        <div class="stat-desc">Team Members</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TEAM ═══ -->
+<section class="team-section py-5" id="team">
+  <div class="container py-4">
+    <div class="row mb-5">
+      <div class="col-lg-6 reveal">
+        <div class="section-label">The Crew</div>
+        <h2 class="section-title">Faces Behind<br>the Magic</h2>
+      </div>
+    </div>
+    <div class="row g-4">
+
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="team-card">
+          <img
+            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&h=660&fit=crop&facepad=3&faces=1"
+            srcset="
+              https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=400&fit=crop  300w,
+              https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&h=660&fit=crop  500w"
+            sizes="(max-width:576px) 100vw, (max-width:992px) 50vw, 25vw"
+            alt="Elena Markov — Creative Director" class="img-fluid" loading="lazy"
+          />
+          <div class="team-info">
+            <p class="team-name">Elena Markov</p>
+            <p class="team-role">Creative Director</p>
+            <div class="team-socials">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-twitter-x"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.1s">
+        <div class="team-card">
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=660&fit=crop&facepad=3"
+            srcset="
+              https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop  300w,
+              https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=660&fit=crop  500w"
+            sizes="(max-width:576px) 100vw, (max-width:992px) 50vw, 25vw"
+            alt="James Okafor — Lead Developer" class="img-fluid" loading="lazy"
+          />
+          <div class="team-info">
+            <p class="team-name">James Okafor</p>
+            <p class="team-role">Lead Developer</p>
+            <div class="team-socials">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-github"></i></a>
+              <a href="#"><i class="bi bi-twitter-x"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.2s">
+        <div class="team-card">
+          <img
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=660&fit=crop&facepad=3"
+            srcset="
+              https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=400&fit=crop  300w,
+              https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=660&fit=crop  500w"
+            sizes="(max-width:576px) 100vw, (max-width:992px) 50vw, 25vw"
+            alt="Yuki Tanaka — UX Strategist" class="img-fluid" loading="lazy"
+          />
+          <div class="team-info">
+            <p class="team-name">Yuki Tanaka</p>
+            <p class="team-role">UX Strategist</p>
+            <div class="team-socials">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-dribbble"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-lg-3 reveal" style="transition-delay:.3s">
+        <div class="team-card">
+          <img
+            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=660&fit=crop&facepad=3"
+            srcset="
+              https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=400&fit=crop  300w,
+              https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=660&fit=crop  500w"
+            sizes="(max-width:576px) 100vw, (max-width:992px) 50vw, 25vw"
+            alt="Amara Singh — Brand Strategist" class="img-fluid" loading="lazy"
+          />
+          <div class="team-info">
+            <p class="team-name">Amara Singh</p>
+            <p class="team-role">Brand Strategist</p>
+            <div class="team-socials">
+              <a href="#"><i class="bi bi-linkedin"></i></a>
+              <a href="#"><i class="bi bi-twitter-x"></i></a>
+              <a href="#"><i class="bi bi-behance"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="testimonials-section py-5" id="testimonials">
+  <div class="container py-4">
+    <div class="row mb-5 justify-content-between align-items-end">
+      <div class="col-lg-5 reveal">
+        <div class="section-label">Client Voices</div>
+        <h2 class="section-title">What Our<br>Clients Say</h2>
+      </div>
+      <div class="col-lg-5 reveal">
+        <p style="color:var(--muted); font-size:.9rem; line-height:1.8;">
+          Don't take our word for it. Here's what the people we've worked with most have to say about the Lumina experience.
+        </p>
+      </div>
+    </div>
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <div class="t-quote">"</div>
+          <p class="t-text">Lumina completely transformed how we present ourselves online. The new brand identity drove a 40% uplift in qualified leads within three months.</p>
+          <div class="t-author">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=88&h=88&fit=crop" srcset="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=88&h=88&fit=crop 2x" alt="David Park" class="t-avatar" loading="lazy"/>
+            <div>
+              <p class="t-name">David Park</p>
+              <p class="t-role">CEO, Orion Finance</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal" style="transition-delay:.1s">
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <div class="t-quote">"</div>
+          <p class="t-text">Working with this team was unlike any agency experience I've had. They understood our vision instantly and delivered something even better than we imagined.</p>
+          <div class="t-author">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=88&h=88&fit=crop" srcset="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=88&h=88&fit=crop 2x" alt="Priya Nair" class="t-avatar" loading="lazy"/>
+            <div>
+              <p class="t-name">Priya Nair</p>
+              <p class="t-role">CMO, Bloom Beauty</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal" style="transition-delay:.2s">
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <div class="t-quote">"</div>
+          <p class="t-text">The motion reel they produced for our product launch generated over 2M organic views in the first week. Pure magic from start to finish.</p>
+          <div class="t-author">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=88&h=88&fit=crop" srcset="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=88&h=88&fit=crop 2x" alt="Marco Ellis" class="t-avatar" loading="lazy"/>
+            <div>
+              <p class="t-name">Marco Ellis</p>
+              <p class="t-role">Founder, TechWave</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA SECTION ═══ -->
+<section class="cta-section py-5">
+  <div class="container py-4">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5 reveal-l order-lg-2">
+        <img
+          src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=800&h=600&fit=crop"
+          srcset="
+            https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=400&h=300&fit=crop  400w,
+            https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=800&h=600&fit=crop  800w"
+          sizes="(max-width:768px) 100vw, 40vw"
+          alt="Creative team meeting"
+          class="cta-img img-fluid"
+          loading="lazy"
+        />
+      </div>
+      <div class="col-lg-7 reveal-r order-lg-1">
+        <div class="section-label">Ready?</div>
+        <h2 class="section-title mb-4">Let's Build Something<br><span class="text-accent">Extraordinary</span></h2>
+        <p style="color:var(--muted); line-height:1.8; max-width:480px; margin-bottom:2rem;">
+          Whether you're launching a new brand or reinventing an established one, we'd love to hear your vision. Spots are limited — reach out today.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="#contact" class="btn-accent">Start a Project <i class="bi bi-arrow-right"></i></a>
+          <a href="mailto:hello@lumina.studio" class="btn-ghost"><i class="bi bi-envelope"></i> hello@lumina.studio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BLOG ═══ -->
+<section class="blog-section py-5" id="blog">
+  <div class="container py-4">
+    <div class="row mb-5 align-items-end">
+      <div class="col-lg-6 reveal">
+        <div class="section-label">Our Journal</div>
+        <h2 class="section-title">Insights &<br>Perspectives</h2>
+      </div>
+      <div class="col-lg-6 text-lg-end reveal">
+        <a href="#" class="btn-ghost mt-3">All Articles <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-4 reveal">
+        <div class="blog-card">
+          <div class="blog-img-wrap">
+            <img
+              src="https://images.unsplash.com/photo-1558655146-9f16fb52dbce?w=700&h=393&fit=crop"
+              srcset="
+                https://images.unsplash.com/photo-1558655146-9f16fb52dbce?w=400&h=225&fit=crop  400w,
+                https://images.unsplash.com/photo-1558655146-9f16fb52dbce?w=700&h=393&fit=crop  700w"
+              sizes="(max-width:768px) 100vw, 33vw"
+              alt="Design trends 2025" class="blog-img img-fluid" loading="lazy"
+            />
+          </div>
+          <div class="blog-body">
+            <div class="blog-tag">Design</div>
+            <h3 class="blog-title">The 7 Design Trends That Will Define 2025</h3>
+            <div class="blog-meta">
+              <span><i class="bi bi-calendar3"></i> May 12, 2025</span>
+              <span><i class="bi bi-clock"></i> 5 min read</span>
+            </div>
+            <p class="blog-excerpt">From kinetic typography to brutalist UI, we break down the aesthetic movements reshaping digital design this year.</p>
+            <span class="blog-read-more">Read Article <i class="bi bi-arrow-right"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal" style="transition-delay:.1s">
+        <div class="blog-card">
+          <div class="blog-img-wrap">
+            <img
+              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&h=393&fit=crop"
+              srcset="
+                https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=225&fit=crop  400w,
+                https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&h=393&fit=crop  700w"
+              sizes="(max-width:768px) 100vw, 33vw"
+              alt="Brand strategy" class="blog-img img-fluid" loading="lazy"
+            />
+          </div>
+          <div class="blog-body">
+            <div class="blog-tag">Strategy</div>
+            <h3 class="blog-title">Why Your Brand Voice Matters More Than Your Logo</h3>
+            <div class="blog-meta">
+              <span><i class="bi bi-calendar3"></i> Apr 28, 2025</span>
+              <span><i class="bi bi-clock"></i> 7 min read</span>
+            </div>
+            <p class="blog-excerpt">Visual identity gets the first glance, but it's your tone of voice that builds trust over the long run.</p>
+            <span class="blog-read-more">Read Article <i class="bi bi-arrow-right"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 reveal" style="transition-delay:.2s">
+        <div class="blog-card">
+          <div class="blog-img-wrap">
+            <img
+              src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop 400w"
+              srcset="
+                https://images.unsplash.com/photo-1555421689-d68197f9bca4?w=400&h=225&fit=crop  400w,
+                https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&h=393&fit=crop  700w"
+              sizes="(max-width:768px) 100vw, 33vw"
+              alt="AI in design" class="blog-img img-fluid" loading="lazy"
+            />
+          </div>
+          <div class="blog-body">
+            <div class="blog-tag">Technology</div>
+            <h3 class="blog-title">How We Use AI to 10× Our Creative Output</h3>
+            <div class="blog-meta">
+              <span><i class="bi bi-calendar3"></i> Apr 10, 2025</span>
+              <span><i class="bi bi-clock"></i> 6 min read</span>
+            </div>
+            <p class="blog-excerpt">AI won't replace designers — but designers who use AI will replace those who don't. Here's our toolkit.</p>
+            <span class="blog-read-more">Read Article <i class="bi bi-arrow-right"></i></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="contact-section py-5" id="contact">
+  <div class="container py-4">
+    <div class="row mb-5">
+      <div class="col-lg-6 reveal">
+        <div class="section-label">Get In Touch</div>
+        <h2 class="section-title">Tell Us About<br>Your Project</h2>
+      </div>
+    </div>
+    <div class="row g-5">
+
+      <div class="col-lg-5 reveal-l">
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-geo-alt"></i></div>
+          <div class="contact-info-text">
+            <h6>Our Studio</h6>
+            <p>47 Clerkenwell Green, London EC1R 0EB, UK</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-telephone"></i></div>
+          <div class="contact-info-text">
+            <h6>Phone</h6>
+            <p>+44 (0)20 7123 4567</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-envelope"></i></div>
+          <div class="contact-info-text">
+            <h6>Email</h6>
+            <p>hello@lumina.studio</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-clock"></i></div>
+          <div class="contact-info-text">
+            <h6>Hours</h6>
+            <p>Mon–Fri, 9:00am – 6:00pm GMT</p>
+          </div>
+        </div>
+
+        <!-- Map image -->
+        <div class="mt-3" style="border-radius:6px; overflow:hidden;">
+          <img
+            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&h=300&fit=crop"
+            srcset="
+              https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&h=200&fit=crop  400w,
+              https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&h=300&fit=crop  600w"
+            sizes="(max-width:768px) 100vw, 40vw"
+            alt="London map view" class="img-fluid w-100" style="height:200px; object-fit:cover;" loading="lazy"
+          />
+        </div>
+      </div>
+
+      <div class="col-lg-7 reveal-r">
+        <form class="contact-form" onsubmit="handleForm(event)">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label>First Name</label>
+              <input type="text" class="form-control" placeholder="Elena" required />
+            </div>
+            <div class="col-sm-6">
+              <label>Last Name</label>
+              <input type="text" class="form-control" placeholder="Markov" required />
+            </div>
+            <div class="col-sm-6">
+              <label>Email Address</label>
+              <input type="email" class="form-control" placeholder="elena@company.com" required />
+            </div>
+            <div class="col-sm-6">
+              <label>Phone Number</label>
+              <input type="tel" class="form-control" placeholder="+44 7700 900000" />
+            </div>
+            <div class="col-12">
+              <label>Service Interested In</label>
+              <select class="form-control">
+                <option value="" disabled selected>Choose a service...</option>
+                <option>Brand Identity</option>
+                <option>Web & App Design</option>
+                <option>Motion & Video</option>
+                <option>Growth Marketing</option>
+                <option>Full Service Partnership</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label>Project Budget</label>
+              <select class="form-control">
+                <option value="" disabled selected>Select budget range...</option>
+                <option>£5k – £15k</option>
+                <option>£15k – £50k</option>
+                <option>£50k – £100k</option>
+                <option>£100k+</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label>Tell Us About Your Project</label>
+              <textarea class="form-control" rows="5" placeholder="Share your vision, goals, timeline..."></textarea>
+            </div>
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn-accent w-100" style="justify-content:center; font-size:1rem;">
+                Send Message <i class="bi bi-send"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+        <div id="formSuccess" style="display:none; margin-top:1rem; padding:1rem; background:rgba(232,255,71,.1); border:1px solid rgba(232,255,71,.3); border-radius:4px; color:var(--accent); font-size:.9rem;">
+          ✓ Message received! We'll be in touch within one business day.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="footer-brand">Lumina<span>.</span></div>
+        <p class="footer-desc">A creative studio crafting bold digital experiences for ambitious brands around the world.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+          <a href="#" aria-label="Dribbble"><i class="bi bi-dribbble"></i></a>
+          <a href="#" aria-label="Behance"><i class="bi bi-behance"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-sm-4 offset-lg-1">
+        <h5 class="footer-heading">Services</h5>
+        <ul class="footer-links">
+          <li><a href="#">Branding</a></li>
+          <li><a href="#">Web Design</a></li>
+          <li><a href="#">Motion</a></li>
+          <li><a href="#">Marketing</a></li>
+          <li><a href="#">Packaging</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-2 col-sm-4">
+        <h5 class="footer-heading">Company</h5>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Work</a></li>
+          <li><a href="#">Team</a></li>
+          <li><a href="#">Journal</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-2 col-sm-4">
+        <h5 class="footer-heading">Legal</h5>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="footer-divider" />
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <p class="footer-copy mb-0">© 2025 Lumina Studio Ltd. All rights reserved.</p>
+      <p class="footer-copy mb-0">Designed &amp; built with ♥ in London</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* ─── SCROLL PROGRESS ─── */
+window.addEventListener('scroll', () => {
+  const el   = document.getElementById('progress-bar');
+  const tot  = document.documentElement.scrollHeight - window.innerHeight;
+  el.style.width = (window.scrollY / tot * 100) + '%';
+});
+
+/* ─── NAV SCROLL ─── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ─── SCROLL REVEAL ─── */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('revealed');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal, .reveal-l, .reveal-r').forEach(el => revealObserver.observe(el));
+
+/* ─── SKILL BARS ─── */
+const barObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-bar-fill').forEach(b => b.classList.add('animated'));
+      barObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.about-section').forEach(el => barObserver.observe(el));
+
+/* ─── COUNT UP ─── */
+const countObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el     = e.target;
+    const target = +el.dataset.target;
+    const dur    = 1800;
+    const step   = dur / 60;
+    let current  = 0;
+    const inc    = target / (dur / 16);
+    const tick   = () => {
+      current = Math.min(current + inc, target);
+      el.textContent = Math.floor(current) + (el.dataset.suffix || '+');
+      if (current < target) requestAnimationFrame(tick);
+    };
+    tick();
+    countObserver.unobserve(el);
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('[data-target]').forEach(el => {
+  el.dataset.suffix = '+';
+  countObserver.observe(el);
+});
+
+/* ─── PORTFOLIO FILTER ─── */
+function filterPortfolio(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#portfolioGrid [data-cat]').forEach(item => {
+    item.style.transition = 'opacity .4s, transform .4s';
+    if (cat === 'all' || item.dataset.cat === cat) {
+      item.style.opacity = '1'; item.style.transform = 'scale(1)';
+      item.style.pointerEvents = 'auto';
+    } else {
+      item.style.opacity = '.2'; item.style.transform = 'scale(.97)';
+      item.style.pointerEvents = 'none';
+    }
+  });
+}
+
+/* ─── SMOOTH SCROLL NAV ─── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id.length > 1) {
+      e.preventDefault();
+      const target = document.querySelector(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // close mobile nav
+      const nav = document.getElementById('navbarNav');
+      if (nav.classList.contains('show')) bootstrap.Collapse.getInstance(nav)?.hide();
+    }
+  });
+});
+
+/* ─── CONTACT FORM ─── */
+function handleForm(e) {
+  e.preventDefault();
+  document.getElementById('formSuccess').style.display = 'block';
+  e.target.reset();
+  setTimeout(() => {
+    document.getElementById('formSuccess').style.display = 'none';
+  }, 5000);
+}
+</script>
+</body>
+</html>
