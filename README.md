@@ -1,8 +1,8 @@
 # digital studio Website
 
-A sleek and responsive business portfolio website designed to showcase professional services, skills, projects, and contact information with a modern user experience. Built using modern frontend technologies with a clean layout, smooth animations, and mobile-friendly design.
+A sleek and responsive digital studio website designed to showcase professional services, skills, projects, and contact information with a modern user experience. Built using modern frontend technologies with a clean layout, smooth animations, and mobile-friendly design.
 
-🔗 **Live Demo:** https://rukshana-roshan.github.io/modern-business-portfolio-website/
+🔗 **Live Demo:** 
 
 ## 📸 Preview
 
