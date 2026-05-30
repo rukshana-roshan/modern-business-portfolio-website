@@ -1,4 +1,4 @@
-# 🌐 Modern Business Portfolio Website
+# digital studio Website
 
 A sleek and responsive business portfolio website designed to showcase professional services, skills, projects, and contact information with a modern user experience. Built using modern frontend technologies with a clean layout, smooth animations, and mobile-friendly design.
 
