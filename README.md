@@ -2,7 +2,7 @@
 
 A sleek and responsive digital studio website designed to showcase professional services, skills, projects, and contact information with a modern user experience. Built using modern frontend technologies with a clean layout, smooth animations, and mobile-friendly design.
 
-🔗 **Live Demo:** 
+🔗 **Live Demo:** https://rukshana-roshan.github.io/digital-studio-website/
 
 ## 📸 Preview
 
